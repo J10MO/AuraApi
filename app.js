@@ -152,6 +152,7 @@ app.use(
         process.env.CLIENT_URL || "http://localhost:5173",
         "http://localhost:5173",
         "http://localhost:3000",
+        "https://aura-dashbuard.vercel.app",
       ]
 
       // Allow requests with no origin (like mobile apps or curl requests)
