@@ -145,32 +145,45 @@ app.use(
 )
 app.use(compression())
 
+// CORS configuration using environment variables
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = [
-        process.env.CLIENT_URL || "http://localhost:5173",
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://aura-dashbuard.vercel.app",
-      ]
+      // Parse ALLOWED_ORIGINS from environment variable
+      const allowedOrigins = process.env.ALLOWED_ORIGINS 
+        ? process.env.ALLOWED_ORIGINS.split(',') 
+        : [
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://aura-dashbuard.vercel.app"
+          ];
+
+      // Add individual environment variables if needed
+      if (process.env.DASHBOARD_URL && !allowedOrigins.includes(process.env.DASHBOARD_URL)) {
+        allowedOrigins.push(process.env.DASHBOARD_URL);
+      }
+      
+      if (process.env.WEBSITE_URL && !allowedOrigins.includes(process.env.WEBSITE_URL)) {
+        allowedOrigins.push(process.env.WEBSITE_URL);
+      }
 
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true)
+      if (!origin) return callback(null, true);
 
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true)
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"))
+        console.log(`CORS blocked for origin: ${origin}. Allowed: ${allowedOrigins.join(', ')}`);
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     exposedHeaders: ["Content-Range", "X-Content-Range"],
-    maxAge: 86400, // 24 hours
+    maxAge: 86400,
   }),
-)
+);
 
 app.use(bodyParser.json({ limit: "10mb" }))
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }))
