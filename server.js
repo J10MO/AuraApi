@@ -42,7 +42,7 @@ async function initializeServer() {
     process.on("SIGINT", () => {
       console.log("🛑 استقبال إشارة SIGINT، إغلاق الخادم...")
       server.close(() => {
-        console.log("✅ تم إغلاق الخادم بنجاح")
+        console.log("✅ تم إغل��ق الخادم بنجاح")
         process.exit(0)
       })
     })
