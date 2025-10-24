@@ -1,4 +1,4 @@
-# OTPIQ WhatsApp OTP Setup Guide
+<!-- # OTPIQ WhatsApp OTP Setup Guide
 
 ## Overview
 This application uses OTPIQ API for sending OTP codes via WhatsApp and SMS.
@@ -115,4 +115,4 @@ For OTPIQ API support, visit: https://otpiq.com/docs
 \`\`\`
 
 ```typescriptreact file="WHATSAPP_SETUP.md" isDeleted="true"
-...deleted...
+...deleted... -->
