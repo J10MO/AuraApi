@@ -12,5 +12,6 @@ router.put("/:orderId/cancel", authenticateJWT, orderController.cancelOrder)
 // Admin routes - Order management (authentication + admin role required)
 router.put("/:orderId/status", authenticateJWT, isAdmin, orderController.updateOrderStatus)
 router.put("/:orderId", authenticateJWT, isAdmin, orderController.updateOrder)
+router.delete("/:orderId", authenticateJWT, isAdmin, orderController.deleteOrder)
 
 module.exports = router
