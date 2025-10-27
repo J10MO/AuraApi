@@ -750,8 +750,6 @@
 
 
 
-
-
 const { pool } = require("../config/database")
 const { redisClient } = require("../config/redis")
 
@@ -871,6 +869,8 @@ const productController = {
       // Calculate sale price if discount is provided
       const salePrice = discount > 0 ? price * (1 - discount / 100) : null
 
+      const finalInStock = Number.parseInt(stock_quantity) > 0 ? Boolean(in_stock) : false
+
       const result = await pool.query(
         `INSERT INTO products (
           name, name_ar, brand, price, original_price, description, 
@@ -889,7 +889,7 @@ const productController = {
           Number.parseInt(category_id),
           image_url,
           emoji_icon,
-          Boolean(in_stock),
+          finalInStock,
           Number.parseFloat(discount),
           badge,
           Number.parseInt(stock_quantity),
@@ -966,6 +966,11 @@ const productController = {
       // Calculate sale price if discount is provided
       const salePrice = discount > 0 ? price * (1 - discount / 100) : null
 
+      let finalInStock = in_stock
+      if (stock_quantity !== undefined && Number.parseInt(stock_quantity) === 0) {
+        finalInStock = false
+      }
+
       const query = `
         UPDATE products SET 
           name = COALESCE($1, name),
@@ -998,7 +1003,7 @@ const productController = {
         description_ar,
         category_id,
         emoji_icon,
-        in_stock,
+        finalInStock,
         discount,
         badge,
         image_url,
