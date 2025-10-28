@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/clean-otps",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/update-ads",
+      "schedule": "*/30 * * * *"
+    }
+  ]
+}
