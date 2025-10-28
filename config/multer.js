@@ -77,6 +77,85 @@
 // module.exports = upload;
 
 
+// const multer = require('multer');
+// const path = require('path');
+// const fs = require('fs').promises;
+
+// // File upload configuration
+// const storage = multer.diskStorage({
+//   destination: async (req, file, cb) => {
+//     const uploadPath = 'uploads/products';
+//     await fs.mkdir(uploadPath, { recursive: true });
+//     cb(null, uploadPath);
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     cb(null, uniqueSuffix + path.extname(file.originalname));
+//   }
+// });
+
+// const upload = multer({ 
+//   storage: storage,
+//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+//   fileFilter: (req, file, cb) => {
+//     const allowedTypes = /jpeg|jpg|png|gif|webp/;
+//     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+//     const mimetype = allowedTypes.test(file.mimetype);
+//     if (mimetype && extname) {
+//       return cb(null, true);
+//     } else {
+//       cb(new Error('Only image files are allowed'));
+//     }
+//   }
+// });
+
+// module.exports = upload;
+
+
+
+// // config/multer.js
+// const multer = require('multer');
+// const path = require('path');
+// const fs = require('fs');
+
+// // إنشاء مجلد التحميلات إذا لم يكن موجوداً
+// const uploadsDir = path.join(__dirname, '../uploads/products');
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true });
+// }
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, uploadsDir);
+//   },
+//   filename: function (req, file, cb) {
+//     // إنشاء اسم فريد للملف
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     const ext = path.extname(file.originalname);
+//     cb(null, 'product-' + uniqueSuffix + ext);
+//   }
+// });
+
+// const fileFilter = (req, file, cb) => {
+//   // التحقق من نوع الملف
+//   if (file.mimetype.startsWith('image/')) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error('Only image files are allowed!'), false);
+//   }
+// };
+
+// const upload = multer({
+//   storage: storage,
+//   fileFilter: fileFilter,
+//   limits: {
+//     fileSize: 5 * 1024 * 1024, // 5MB limit
+//   }
+// });
+
+// module.exports = upload;
+
+
 
 
 const multer = require('multer');
