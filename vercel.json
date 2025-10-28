@@ -7,16 +7,42 @@
     }
   ],
   "routes": [
+
     {
-      "src": "/uploads/(.*)",
-      "dest": "/uploads/$1"
+      "source": "/legacy/:path*",
+      "destination": "/new/:path*",
+      "permanent": true
     },
     {
-      "src": "/(.*)",
-      "dest": "server.js"
+      "source": "/old-page",
+      "destination": "/new-page",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/articles/:slug",
+      "permanent": false
+    },
+    {
+      "source": "/external-link",
+      "destination": "https://example.com",
+      "permanent": false
+    },
+    
+ 
+    {
+      "source": "/proxy/:path*",
+      "destination": "https://external-api.com/:path*"
+    },
+    {
+      "source": "/api/:endpoint*",
+      "destination": "https://your-backend.com/api/:endpoint*"
+    },
+    
+    
+    {
+      "source": "/(.*)",
+      "dest": "/server.js"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
