@@ -2624,17 +2624,24 @@ const productController = {
 
     if (req.file) {
       try {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-        const ext = req.file.originalname.split(".").pop()
-        const filename = `product-${uniqueSuffix}.${ext}`
+        if (!process.env.BLOB_READ_WRITE_TOKEN) {
+          console.error("[v0] BLOB_READ_WRITE_TOKEN is not set in environment variables")
+          return res.status(500).json({
+            error: "Storage configuration error",
+            message: "تكوين التخزين غير صحيح. يرجى التواصل مع المسؤول.",
+            details:
+              "BLOB_READ_WRITE_TOKEN environment variable is missing. Please add it to your Vercel project settings.",
+          })
+        }
 
-        finalImageUrl = await uploadToBlob(req.file.buffer, filename, "products")
+        finalImageUrl = await uploadToBlob(req.file, "products")
         console.log("[v0] Uploaded to Blob:", finalImageUrl)
       } catch (error) {
         console.error("[v0] Blob upload error:", error)
         return res.status(500).json({
           error: "File upload failed",
           message: "فشل رفع الصورة",
+          details: error.message,
         })
       }
     } else if (image_url) {
@@ -2749,11 +2756,7 @@ const productController = {
 
       if (req.file) {
         try {
-          const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-          const ext = req.file.originalname.split(".").pop()
-          const filename = `product-${uniqueSuffix}.${ext}`
-
-          finalImageUrl = await uploadToBlob(req.file.buffer, filename, "products")
+          finalImageUrl = await uploadToBlob(req.file, "products")
           console.log("[v0] Uploaded to Blob:", finalImageUrl)
 
           // Delete old image if it was a blob URL
@@ -2864,6 +2867,8 @@ const productController = {
     const { id } = req.params
 
     try {
+      console.log("[v0] Deleting product:", id)
+
       // Get product info before deletion for category update
       const productResult = await pool.query("SELECT category_id, image_url FROM products WHERE id = $1", [id])
 
@@ -2877,8 +2882,7 @@ const productController = {
       const category_id = productResult.rows[0].category_id
       const imageUrl = productResult.rows[0].image_url
 
-      // Delete image from blob storage if it's a blob URL
-      if (imageUrl && imageUrl.startsWith(process.env.BLOB_STORAGE_URL)) {
+      if (imageUrl) {
         await deleteFromBlob(imageUrl)
       }
 
@@ -2903,8 +2907,8 @@ const productController = {
         product: result.rows[0],
       })
     } catch (err) {
-      console.error("Error deleting product:", err)
-      res.status(500).json({ error: "Server error" })
+      console.error("[v0] Error deleting product:", err)
+      res.status(500).json({ error: "Server error", details: err.message })
     }
   },
 

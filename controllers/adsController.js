@@ -743,17 +743,24 @@ const createAd = async (req, res) => {
 
     if (req.file) {
       try {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-        const ext = req.file.originalname.split(".").pop()
-        const filename = `ad-${uniqueSuffix}.${ext}`
+        if (!process.env.BLOB_READ_WRITE_TOKEN) {
+          console.error("[v0] BLOB_READ_WRITE_TOKEN is not set in environment variables")
+          return res.status(500).json({
+            error: "Storage configuration error",
+            message: "تكوين التخزين غير صحيح. يرجى التواصل مع المسؤول.",
+            details:
+              "BLOB_READ_WRITE_TOKEN environment variable is missing. Please add it to your Vercel project settings.",
+          })
+        }
 
-        finalImageUrl = await uploadToBlob(req.file.buffer, filename, "ads")
+        finalImageUrl = await uploadToBlob(req.file, "ads")
         console.log("[v0] Uploaded to Blob:", finalImageUrl)
       } catch (error) {
         console.error("[v0] Blob upload error:", error)
         return res.status(500).json({
           error: "فشل رفع الصورة",
           message: "Failed to upload image",
+          details: error.message,
         })
       }
     } else if (image_url) {
@@ -925,11 +932,17 @@ const updateAd = async (req, res) => {
 
     if (req.file) {
       try {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-        const ext = req.file.originalname.split(".").pop()
-        const filename = `ad-${uniqueSuffix}.${ext}`
+        if (!process.env.BLOB_READ_WRITE_TOKEN) {
+          console.error("[v0] BLOB_READ_WRITE_TOKEN is not set in environment variables")
+          return res.status(500).json({
+            error: "Storage configuration error",
+            message: "تكوين التخزين غير صحيح. يرجى التواصل مع المسؤول.",
+            details:
+              "BLOB_READ_WRITE_TOKEN environment variable is missing. Please add it to your Vercel project settings.",
+          })
+        }
 
-        finalImageUrl = await uploadToBlob(req.file.buffer, filename, "ads")
+        finalImageUrl = await uploadToBlob(req.file, "ads")
         console.log("[v0] Uploaded to Blob:", finalImageUrl)
 
         // Delete old image if it was a blob URL
@@ -941,6 +954,7 @@ const updateAd = async (req, res) => {
         return res.status(500).json({
           error: "فشل رفع الصورة",
           message: "Failed to upload image",
+          details: error.message,
         })
       }
     } else if (image_url !== undefined) {

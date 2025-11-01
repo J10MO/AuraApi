@@ -2922,17 +2922,24 @@ const categoryController = {
 
       if (req.file) {
         try {
-          const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-          const ext = req.file.originalname.split(".").pop()
-          const filename = `category-${uniqueSuffix}.${ext}`
+          if (!process.env.BLOB_READ_WRITE_TOKEN) {
+            console.error("[v0] BLOB_READ_WRITE_TOKEN is not set in environment variables")
+            return res.status(500).json({
+              error: "Storage configuration error",
+              message: "تكوين التخزين غير صحيح. يرجى التواصل مع المسؤول.",
+              details:
+                "BLOB_READ_WRITE_TOKEN environment variable is missing. Please add it to your Vercel project settings.",
+            })
+          }
 
-          finalImageUrl = await uploadToBlob(req.file.buffer, filename, "categories")
+          finalImageUrl = await uploadToBlob(req.file, "categories")
           console.log("[v0] Uploaded to Blob:", finalImageUrl)
         } catch (error) {
           console.error("[v0] Blob upload error:", error)
           return res.status(500).json({
             error: "File upload failed",
             message: "فشل رفع الصورة",
+            details: error.message,
           })
         }
       } else if (image_url) {
@@ -3015,11 +3022,7 @@ const categoryController = {
 
       if (req.file) {
         try {
-          const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-          const ext = req.file.originalname.split(".").pop()
-          const filename = `category-${uniqueSuffix}.${ext}`
-
-          finalImageUrl = await uploadToBlob(req.file.buffer, filename, "categories")
+          finalImageUrl = await uploadToBlob(req.file, "categories")
           console.log("[v0] Uploaded to Blob:", finalImageUrl)
 
           // Delete old image if it was a blob URL
