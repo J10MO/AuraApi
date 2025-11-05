@@ -27,6 +27,7 @@
     "multer": "^2.0.2",
     "pg": "^8.11.3",
     "redis": "^4.6.12",
+    "sharp": "^0.33.2",
     "socket.io": "^4.6.1"
   },
   "devDependencies": {
