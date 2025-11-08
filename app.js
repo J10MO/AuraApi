@@ -644,18 +644,48 @@ app.use(compression())
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = [
-        process.env.CLIENT_URL || "http://localhost:5173",
-        "http://localhost:5173",
-        "http://localhost:3000",
-      ]
+      // Parse ALLOWED_ORIGINS from environment variable
+      const allowedOrigins = process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(",").map((url) => url.trim())
+        : []
+
+      // Add individual environment variables (remove trailing slashes)
+      const dashboardUrl = process.env.DASHBOARD_URL ? process.env.DASHBOARD_URL.replace(/\/$/, "") : null
+      const websiteUrl = process.env.WEBSITE_URL ? process.env.WEBSITE_URL.replace(/\/$/, "") : null
+
+      if (dashboardUrl && !allowedOrigins.includes(dashboardUrl)) {
+        allowedOrigins.push(dashboardUrl)
+      }
+
+      if (websiteUrl && !allowedOrigins.includes(websiteUrl)) {
+        allowedOrigins.push(websiteUrl)
+      }
+
+      // Fallback to default origins if none specified
+      if (allowedOrigins.length === 0) {
+        allowedOrigins.push(
+          "https://www.auraiq.site",
+          "http://localhost:5173",
+          "http://localhost:3000",
+          "https://aura-dashbuard.vercel.app",
+        )
+      }
+
+      console.log("Allowed origins:", allowedOrigins)
+      console.log("Request origin:", origin)
 
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true)
+      if (!origin) {
+        console.log("No origin - allowing request")
+        return callback(null, true)
+      }
 
-      if (allowedOrigins.indexOf(origin) !== -1) {
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin)) {
+        console.log("Origin allowed:", origin)
         callback(null, true)
       } else {
+        console.log(`CORS blocked for origin: ${origin}. Allowed: ${allowedOrigins.join(", ")}`)
         callback(new Error("Not allowed by CORS"))
       }
     },
@@ -663,8 +693,9 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     exposedHeaders: ["Content-Range", "X-Content-Range"],
-    maxAge: 86400, // 24 hours
+    maxAge: 86400,
   }),
+
 )
 
 app.use(bodyParser.json({ limit: "10mb" }))
