@@ -9,7 +9,12 @@
     "build": "echo 'Building Olivia Beauty Shop backend'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["ecommerce", "beauty", "shop", "api"],
+  "keywords": [
+    "ecommerce",
+    "beauty",
+    "shop",
+    "api"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -28,10 +33,26 @@
     "pg": "^8.11.3",
     "redis": "^4.6.12",
     "sharp": "^0.33.2",
-    "socket.io": "^4.6.1"
+    "socket.io": "^4.6.1",
+    "path": "0.12.7",
+    "fs": "0.0.1-security",
+    "next": "16.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.553.0",
+    "tailwind-merge": "3.3.1",
+    "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "@types/node": "24.10.0",
+    "tailwindcss": "4.1.17",
+    "typescript": "5.9.3",
+    "postcss": "8.5.6"
   },
   "engines": {
     "node": ">=18.0.0"
